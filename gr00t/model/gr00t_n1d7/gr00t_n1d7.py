@@ -251,22 +251,22 @@ class Gr00tN1d7ActionHead(nn.Module):
         if self.config.use_alternate_vl_dit:
             image_mask = backbone_output.image_mask
             backbone_attention_mask = backbone_output.backbone_attention_mask
-            model_output, _ = self.model(
+            model_output = self.model(
                 hidden_states=sa_embs,
                 encoder_hidden_states=vl_embeds,
                 encoder_attention_mask=vl_attn_mask,
                 timestep=t_discretized,
-                return_all_hidden_states=True,
+                return_all_hidden_states=False,
                 image_mask=image_mask,
                 backbone_attention_mask=backbone_attention_mask,
             )
         else:
-            model_output, _ = self.model(
+            model_output = self.model(
                 hidden_states=sa_embs,
                 encoder_hidden_states=vl_embeds,
                 encoder_attention_mask=vl_attn_mask,
                 timestep=t_discretized,
-                return_all_hidden_states=True,
+                return_all_hidden_states=False,
             )
 
         pred = self.action_decoder(model_output, embodiment_id)

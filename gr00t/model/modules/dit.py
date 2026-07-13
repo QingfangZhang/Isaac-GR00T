@@ -304,7 +304,7 @@ class DiT(ModelMixin, ConfigMixin):
         hidden_states = hidden_states.contiguous()
         encoder_hidden_states = encoder_hidden_states.contiguous()
 
-        all_hidden_states = [hidden_states]
+        all_hidden_states = [hidden_states] if return_all_hidden_states else None
 
         # Process through transformer blocks
         for idx, block in enumerate(self.transformer_blocks):
@@ -324,7 +324,8 @@ class DiT(ModelMixin, ConfigMixin):
                     encoder_attention_mask=None,
                     temb=temb,
                 )
-            all_hidden_states.append(hidden_states)
+            if return_all_hidden_states:
+                all_hidden_states.append(hidden_states)
 
         # Output processing
         conditioning = temb
@@ -372,7 +373,7 @@ class AlternateVLDiT(DiT):
         image_attention_mask = image_mask & backbone_attention_mask
         non_image_attention_mask = (~image_mask) & backbone_attention_mask
 
-        all_hidden_states = [hidden_states]
+        all_hidden_states = [hidden_states] if return_all_hidden_states else None
         assert self.config.interleave_self_attention, "Interleave self attention must be enabled"
 
         # Process through transformer blocks
@@ -402,7 +403,8 @@ class AlternateVLDiT(DiT):
                     encoder_attention_mask=curr_encoder_attention_mask,
                     temb=temb,
                 )
-            all_hidden_states.append(hidden_states)
+            if return_all_hidden_states:
+                all_hidden_states.append(hidden_states)
 
         # Output processing
         conditioning = temb
@@ -470,12 +472,13 @@ class SelfAttentionTransformer(ModelMixin, ConfigMixin):
     ):
         # Process through transformer blocks - single pass through the blocks
         hidden_states = hidden_states.contiguous()
-        all_hidden_states = [hidden_states]
+        all_hidden_states = [hidden_states] if return_all_hidden_states else None
 
         # Process through transformer blocks
         for idx, block in enumerate(self.transformer_blocks):
             hidden_states = block(hidden_states)
-            all_hidden_states.append(hidden_states)
+            if return_all_hidden_states:
+                all_hidden_states.append(hidden_states)
 
         if return_all_hidden_states:
             return hidden_states, all_hidden_states

@@ -152,6 +152,11 @@ logs_*/
 /wt
 
 # General project data / artifacts
+/GR00T_N1D7_ARCHITECTURE.md
+/codex-claude-skills/
+/dataset/
+/launch_finetune-main-flowchart.md
+/output/
 episode_data/
 third_parties/
 *.rdb
